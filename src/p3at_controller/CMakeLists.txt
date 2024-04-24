@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(ariaNode)
+project(p3at_controller)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -7,16 +7,14 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(geometry_msgs REQUIRED)
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
 
-message("The root directory is ${CMAKE_MODULE_PATH}")
-
-#find_library(ARIA_LIB Aria)
-
-#if(ARIA_LIB)
-#  message("the Aria library was found: ${ARIA_LIB}")
-#endif()
+install(
+  DIRECTORY config launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -29,20 +27,5 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-add_executable(ariaNode src/ariaNode.cpp)
-ament_target_dependencies(ariaNode
-"geometry_msgs"
-"rclcpp"
-)
-
-target_link_libraries(
-  ariaNode
-  libAria.so
-)
-
-install(TARGETS
-ariaNode
-DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
