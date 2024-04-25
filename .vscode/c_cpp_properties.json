@@ -1,0 +1,58 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_vehicle_msgs/include/**",
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_system_msgs/include/**",
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_planning_msgs/include/**",
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_perception_msgs/include/**",
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_mapping_msgs/include/**",
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_geometry_msgs/include/**",
+        "/home/valkyrie/Workshop/unity_REVSIM/install/autoware_auto_control_msgs/include/**",
+        "/home/valkyrie/ros2_ws/install/robot_interfaces/include/**",
+        "/home/valkyrie/ros2_ws/install/my_robot_interfaces/include/**",
+        "/home/valkyrie/ros2_ws/install/bus_interface/include/**",
+        "/home/valkyrie/turtlebot3_ws/install/turtlebot3_gazebo/include/**",
+        "/home/valkyrie/turtlebot3_ws/install/turtlebot3_fake_node/include/**",
+        "/home/valkyrie/lifecycle_ws/install/project_interface/include/**",
+        "/home/valkyrie/Workshop/ros2-humble/install/bus_interface/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_v2x_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/component_interface_utils/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_system_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_rtc_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_map_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_external_api_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_debug_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/tier4_control_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/signal_processing/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/osqp_interface/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/morai_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_utils/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_planning_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_perception_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_common_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_system_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_planning_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_perception_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_mapping_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_geometry_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_control_msgs/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_auto_common/include/**",
+        "/home/valkyrie/Workshop/autoware_unity/autoware/install/autoware_adapi_v1_msgs/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/valkyrie/Workshop/p3at_ws/src/p3at_controller/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
