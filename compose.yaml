@@ -1,0 +1,15 @@
+version: '2'
+services:
+  controller_container:
+    image: ${IMAGE}:${TAG}
+    container_name: controller
+    network_mode: host
+    build:
+      context: .
+      target: common
+    devices: [ "/dev/input/js0:/dev/input/js0" ]
+    command: ros2 launch p3at_controller controller.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
