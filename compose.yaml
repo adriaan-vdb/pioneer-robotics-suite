@@ -2,13 +2,14 @@ version: '2'
 services:
   controller_container:
     image: ${IMAGE}:${TAG}
-    container_name: controller
+    container_name: p3at_controller
     network_mode: host
     build:
       context: .
       target: common
     devices: [ "/dev/input/js0:/dev/input/js0" ]
     command: ros2 launch p3at_controller controller.launch.py
+    # command: ros2 run p3at_test_pkg test_node
     volumes:
       - type: bind
         source: /dev/shm

@@ -1,8 +1,10 @@
-FROM althack/ros2:humble-dev AS base
+FROM osrf/ros:humble-desktop AS base
 
 SHELL ["/bin/bash", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive
+
+RUN useradd -ms /bin/bash ros
 
 RUN apt-get update \
     && apt-get -y install \
