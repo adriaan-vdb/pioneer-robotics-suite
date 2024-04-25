@@ -14,3 +14,16 @@ services:
       - type: bind
         source: /dev/shm
         target: /dev/shm
+
+    low_level_container:
+      image: ${IMAGE}:${TAG}
+      container_name: p3at_low_level
+      network_mode: host
+      build:
+        context: .
+        target: common
+      command: ros2 run ariaNode ariaNode
+      volumes:
+        - type: bind
+          source: /dev/shm
+          target: /dev/shm
