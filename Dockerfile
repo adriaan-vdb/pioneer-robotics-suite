@@ -9,7 +9,7 @@ RUN useradd -ms /bin/bash ros
 RUN apt-get update \
     && apt-get -y install \
     wget ros-humble-navigation2 ros-humble-slam-toolbox ros-humble-nav2-bringup ros-humble-teleop-twist-joy \
-    ros-humble-joy-linux ros-humble-cyclonedds ros-humble-phidgets-spatial doxygen\
+    ros-humble-joy-linux ros-humble-cyclonedds ros-humble-phidgets-spatial doxygen ros-humble-xacro\
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

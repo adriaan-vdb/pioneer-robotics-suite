@@ -3,7 +3,7 @@
 
 #export WS=/workspaces/humble_nuway2_ros2_ws
 #export WS=/workspaces/nUWAy_ros2_ws
-export DISPLAY=1
+export DISPLAY=:0
 export ROS_DOMAIN_ID=3
 export ROS_LOCALHOST_ONLY=1
 export TURTLEBOT3_MODEL=waffle

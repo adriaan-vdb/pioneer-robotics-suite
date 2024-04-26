@@ -19,11 +19,28 @@ services:
     image: ${IMAGE}:${TAG}
     container_name: p3at_low_level
     network_mode: host
+    devices: ["/dev/ttyUSB0:/dev/ttyS0"]
     build:
       context: .
       target: common
-    command: ros2 run ariaNode ariaNode
+    command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
     volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+
+  display_container:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_display
+    network_mode: host
+    environment:
+      - DISPLAY
+    build:
+      context: .
+      target: common
+    command: ros2 launch p3at_bringup display.launch.py
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - type: bind
         source: /dev/shm
         target: /dev/shm
