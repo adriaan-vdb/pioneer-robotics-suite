@@ -8,15 +8,15 @@ RUN useradd -ms /bin/bash ros
 
 RUN apt-get update \
     && apt-get -y install \
-    wget ros-humble-navigation2 ros-humble-slam-toolbox ros-humble-nav2-bringup ros-humble-teleop-twist-joy \
-    ros-humble-joy-linux ros-humble-cyclonedds ros-humble-phidgets-spatial doxygen ros-humble-xacro\
+    wget ros-humble-navigation2 ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-nav2-bringup ros-humble-teleop-twist-joy \
+    ros-humble-joy-linux ros-humble-cyclonedds ros-humble-phidgets-spatial doxygen libqt5svg5 libx11-xcb1 ros-humble-xacro \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && pip3 install setuptools==58.2.0 && rm get-pip.py
 
-
+# RUN python3 -m pip install opencv
 # +++++++++++++++++++++++++++++++++++++++++++++++++++
 FROM base as common
 #ENV WS=nUWAy_ros2_ws

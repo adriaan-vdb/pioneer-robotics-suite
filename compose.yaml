@@ -15,19 +15,19 @@ services:
         source: /dev/shm
         target: /dev/shm
 
-  low_level_container:
-    image: ${IMAGE}:${TAG}
-    container_name: p3at_low_level
-    network_mode: host
-    devices: ["/dev/ttyUSB0:/dev/ttyS0"]
-    build:
-      context: .
-      target: common
-    command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
-    volumes:
-      - type: bind
-        source: /dev/shm
-        target: /dev/shm
+  # low_level_container:
+  #   image: ${IMAGE}:${TAG}
+  #   container_name: p3at_low_level
+  #   network_mode: host
+  #   devices: ["/dev/ttyUSB0:/dev/ttyS0"]
+  #   build:
+  #     context: .
+  #     target: common
+  #   command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
+  #   volumes:
+  #     - type: bind
+  #       source: /dev/shm
+  #       target: /dev/shm
 
   display_container:
     image: ${IMAGE}:${TAG}
