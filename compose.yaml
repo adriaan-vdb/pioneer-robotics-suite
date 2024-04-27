@@ -35,12 +35,15 @@ services:
     network_mode: host
     environment:
       - DISPLAY
+      - XAUTHORITY
+      - QT_X11_NO_MITSHM
     build:
       context: .
       target: common
     command: ros2 launch p3at_bringup display.launch.py
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - type: bind
         source: /dev/shm
         target: /dev/shm
