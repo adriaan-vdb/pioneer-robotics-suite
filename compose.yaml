@@ -59,3 +59,16 @@ services:
       - type: bind
         source: /dev/shm
         target: /dev/shm
+
+  lidar_container:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_lidar
+    network_mode: host
+    build:
+      context: .
+      target: common
+    command: ros2 launch p3at_bringup lidar.launch.py
+    vlo
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
