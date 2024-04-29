@@ -68,7 +68,7 @@ services:
       context: .
       target: common
     command: ros2 launch p3at_bringup lidar.launch.py
-    vlo
+    volumes:
       - type: bind
         source: /dev/shm
         target: /dev/shm
