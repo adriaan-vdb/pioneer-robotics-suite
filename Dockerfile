@@ -8,7 +8,7 @@ RUN useradd -ms /bin/bash ros
 
 RUN apt-get update \
     && apt-get -y install \
-    wget ros-humble-navigation2 ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-nav2-bringup ros-humble-teleop-twist-joy \
+    wget ros-humble-navigation2 ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-nav2-bringup ros-humble-teleop-twist-joy ros-humble-depthai-ros-driver\
     ros-humble-joy-linux ros-humble-cyclonedds ros-humble-phidgets-spatial ros-humble-sick-scan-xd ros-humble-pointcloud-to-laserscan \
     doxygen libxcb-xinerama0 ros-humble-xacro \
     # libxcb* \

@@ -15,19 +15,19 @@ services:
         source: /dev/shm
         target: /dev/shm
 
-  # low_level_container:
-  #   image: ${IMAGE}:${TAG}
-  #   container_name: p3at_low_level
-  #   network_mode: host
-  #   devices: ["/dev/ttyUSB0:/dev/ttyS0"]
-  #   build:
-  #     context: .
-  #     target: common
-  #   command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
-  #   volumes:
-  #     - type: bind
-  #       source: /dev/shm
-  #       target: /dev/shm
+  low_level_container:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_low_level
+    network_mode: host
+    devices: ["/dev/ttyUSB0:/dev/ttyS0"]
+    build:
+      context: .
+      target: common
+    command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
 
   display_container:
     image: ${IMAGE}:${TAG}
@@ -51,6 +51,8 @@ services:
     image: ${IMAGE}:${TAG}
     container_name: p3at_sensors
     network_mode: host
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
     build:
       context: .
       target: common
@@ -59,6 +61,12 @@ services:
       - type: bind
         source: /dev/shm
         target: /dev/shm
+      - type: bind
+        source: /dev
+        target: /dev
+      - type: bind
+        source: /dev/bus/usb
+        target: /dev/bus/usb
 
   lidar_container:
     image: ${IMAGE}:${TAG}
@@ -72,3 +80,34 @@ services:
       - type: bind
         source: /dev/shm
         target: /dev/shm
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+  
+  vision_container:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_vision
+    network_mode: host
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+      # - "c 189:* rmw"
+    build:
+      context: .
+      target: common
+    command: ros2 launch depthai_ros_driver camera.launch.py
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+      - type: bind
+        source: /dev
+        target: /dev
+      - type: bind
+        source: /dev/bus/usb
+        target: /dev/bus/usb
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    privileged: True
+    device_cgroup_rules:
+      - "c 189:* rmw"

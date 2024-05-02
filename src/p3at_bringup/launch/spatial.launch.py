@@ -23,7 +23,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     """Generate launch description with multiple components."""
 
-    container = ComposableNodeContainer(
+    container = ComposableNodeContainer( 
             name='phidget_container',
             namespace='',
             package='rclcpp_components',
