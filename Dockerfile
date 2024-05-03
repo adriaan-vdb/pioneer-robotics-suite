@@ -1,10 +1,11 @@
-FROM osrf/ros:humble-desktop AS base
+# FROM osrf/ros:humble-desktop AS base
+FROM althack/ros2:humble-dev AS base
 
 SHELL ["/bin/bash", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN useradd -ms /bin/bash ros
+# RUN useradd -ms /bin/bash ros
 
 RUN apt-get update \
     && apt-get -y install \
@@ -17,6 +18,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && pip3 install setuptools==58.2.0 && rm get-pip.py
+
+# RUN  "source /path/to/ros_entrypoint.sh"
+
 
 # RUN python3 -m pip install opencv
 # +++++++++++++++++++++++++++++++++++++++++++++++++++

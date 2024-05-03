@@ -9,6 +9,7 @@ export ROS_LOCALHOST_ONLY=1
 export TURTLEBOT3_MODEL=waffle
 export QT_DEBUG_PLUGINS=1
 export XAUTHORITY=/tmp/.docker.xauth
+
 # export RMW_IMPLMENTATION=rmw_cyclonedds_cpp
 source /opt/ros/humble/setup.sh
 source ${WORKSPACE}/install/setup.sh
