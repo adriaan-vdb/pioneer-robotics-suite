@@ -110,36 +110,36 @@ services:
         source: /dev/shm
         target: /dev/shm
   
-  # vision_container:
-  #   image: ${IMAGE}:${TAG}
-  #   container_name: p3at_vision
-  #   network_mode: host
-  #   devices:
-  #     - "/dev/bus/usb:/dev/bus/usb"
-  #     # - "c 189:* rmw"
-  #   build:
-  #     context: .
-  #     target: common
-  #   command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py
-  #   environment:
-  #     - DISPLAY
-  #     - QT_X11_NO_MITSHM=1
-  #     - XAUTHORITY
-  #   volumes:
-  #     - type: bind
-  #       source: /dev/shm
-  #       target: /dev/shm
-  #     - type: bind
-  #       source: /dev
-  #       target: /dev
-  #     - type: bind
-  #       source: /dev/bus/usb
-  #       target: /dev/bus/usb
-  #     - /tmp/.X11-unix:/tmp/.X11-unix:rw
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #   privileged: True
-  #   device_cgroup_rules:
-  #     - "c 189:* rmw"
+  p3at_vision:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_vision
+    network_mode: host
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+      # - "c 189:* rmw"
+    build:
+      context: .
+      target: common
+    command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+      - type: bind
+        source: /dev
+        target: /dev
+      - type: bind
+        source: /dev/bus/usb
+        target: /dev/bus/usb
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+    privileged: True
+    device_cgroup_rules:
+      - "c 189:* rmw"
   
   p3at_recognition:
     image: ${IMAGE}:${TAG}

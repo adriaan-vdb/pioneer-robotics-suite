@@ -5,7 +5,7 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 from PIL import Image as PILImage
-from p3at_vision.msg import ObjectInfo
+from p3at_interface.msg import ObjectInfo
 
 THRESHOLD = 150
 
@@ -53,8 +53,8 @@ class imageRecognitionNode(Node):
             
             # create and publish object info
             object_info = ObjectInfo()
-            object_info.x = x
-            object_info.y = y
+            object_info.x = float(x)
+            object_info.y = float(y)
             object_info.color = 'yellow'
             self.object_publisher.publish(object_info)
 
@@ -80,8 +80,8 @@ class imageRecognitionNode(Node):
             
             # create and publish object info
             object_info = ObjectInfo()
-            object_info.x = x
-            object_info.y = y
+            object_info.x = float(x)
+            object_info.y = float(y)
             object_info.color = 'red' 
             self.object_publisher.publish(object_info)
 
