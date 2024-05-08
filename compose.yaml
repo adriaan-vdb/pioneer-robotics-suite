@@ -1,6 +1,6 @@
 version: '3'
 services:
-  controller_container:
+  p3at_controller:
     image: ${IMAGE}:${TAG}
     container_name: p3at_controller
     network_mode: host
@@ -15,7 +15,7 @@ services:
         source: /dev/shm
         target: /dev/shm
 
-  low_level_container:
+  p3at_low_level:
     image: ${IMAGE}:${TAG}
     container_name: p3at_low_level
     network_mode: host
@@ -29,7 +29,20 @@ services:
         source: /dev/shm
         target: /dev/shm
 
-  display_container:
+  p3at_navigation:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_navigation
+    network_mode: host
+    build:
+      context: .
+      target: common
+    command: ros2 launch p3at_bringup slam.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm  
+
+  p3at_display:
     image: ${IMAGE}:${TAG}
     container_name: p3at_display
     network_mode: host
@@ -48,7 +61,7 @@ services:
         source: /dev/shm
         target: /dev/shm
 
-  sensors_container:
+  p3at_sensors:
     image: ${IMAGE}:${TAG}
     container_name: p3at_sensors
     network_mode: host
@@ -69,7 +82,7 @@ services:
         source: /dev/bus/usb
         target: /dev/bus/usb
 
-  lidar_container:
+  p3at_lidar:
     image: ${IMAGE}:${TAG}
     container_name: p3at_lidar
     network_mode: host
@@ -83,6 +96,19 @@ services:
         target: /dev/shm
     devices:
       - "/dev/bus/usb:/dev/bus/usb"
+
+  p3at_localization:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_localization
+    network_mode: host
+    build:
+      context: .
+      target: common
+    command: ros2 launch p3at_bringup localization.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
   
   # vision_container:
   #   image: ${IMAGE}:${TAG}
@@ -115,7 +141,7 @@ services:
   #   device_cgroup_rules:
   #     - "c 189:* rmw"
   
-  recognition_container:
+  p3at_recognition:
     image: ${IMAGE}:${TAG}
     container_name: p3at_recognition
     network_mode: host
