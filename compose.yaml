@@ -35,18 +35,18 @@ services:
     network_mode: host
     environment:
       - DISPLAY
-      - XAUTHORITY
+      # - XAUTHORITY
     build:
       context: .
       target: common
     command: ros2 launch p3at_bringup display.launch.py
-    privileged: True
+    # privileged: True
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      # - type: bind
-      #   source: /dev/shm
-      #   target: /dev/shm
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
 
   sensors_container:
     image: ${IMAGE}:${TAG}
@@ -84,9 +84,40 @@ services:
     devices:
       - "/dev/bus/usb:/dev/bus/usb"
   
-  vision_container:
+  # vision_container:
+  #   image: ${IMAGE}:${TAG}
+  #   container_name: p3at_vision
+  #   network_mode: host
+  #   devices:
+  #     - "/dev/bus/usb:/dev/bus/usb"
+  #     # - "c 189:* rmw"
+  #   build:
+  #     context: .
+  #     target: common
+  #   command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py
+  #   environment:
+  #     - DISPLAY
+  #     - QT_X11_NO_MITSHM=1
+  #     - XAUTHORITY
+  #   volumes:
+  #     - type: bind
+  #       source: /dev/shm
+  #       target: /dev/shm
+  #     - type: bind
+  #       source: /dev
+  #       target: /dev
+  #     - type: bind
+  #       source: /dev/bus/usb
+  #       target: /dev/bus/usb
+  #     - /tmp/.X11-unix:/tmp/.X11-unix:rw
+  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+  #   privileged: True
+  #   device_cgroup_rules:
+  #     - "c 189:* rmw"
+  
+  recognition_container:
     image: ${IMAGE}:${TAG}
-    container_name: p3at_vision
+    container_name: p3at_recognition
     network_mode: host
     devices:
       - "/dev/bus/usb:/dev/bus/usb"
@@ -94,10 +125,11 @@ services:
     build:
       context: .
       target: common
-    command: ros2 launch depthai_ros_driver camera.launch.py
+    command: ros2 launch p3at_vision vision.launch.py
     environment:
       - DISPLAY
       - QT_X11_NO_MITSHM=1
+      - XAUTHORITY
     volumes:
       - type: bind
         source: /dev/shm
@@ -109,6 +141,8 @@ services:
         source: /dev/bus/usb
         target: /dev/bus/usb
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
     privileged: True
     device_cgroup_rules:
       - "c 189:* rmw"
+      

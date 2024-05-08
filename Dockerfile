@@ -19,6 +19,10 @@ RUN apt-get update \
 
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && pip3 install setuptools==58.2.0 && rm get-pip.py
 
+# RUN pip3 install yolov8
+
+RUN pip3 install numpy && pip3 install pillow
+
 # RUN  "source /path/to/ros_entrypoint.sh"
 
 
@@ -36,6 +40,8 @@ RUN cd AriaCoda && make && make install
 COPY --chown=ros:ros --chmod=700 . ${WORKSPACE}
 RUN chown -R ros ${WORKSPACE}
 RUN gpasswd --add ros dialout
+
+# COPY --chown=ros default.rviz /home/ros/.rviz2/default.rviz
 
 COPY --chown=ros ros_entrypoint.sh /ros_entrypoint.sh
 RUN chmod +x  /ros_entrypoint.sh

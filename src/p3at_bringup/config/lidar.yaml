@@ -4,9 +4,10 @@
     frame_id: laser_frame
     scanner_type: sick_tim_7xx
     port: "2112"
-    min_ang: -2.3998277 # -2.35619449019
-    max_ang: +2.3998277 # 2.35619449019
+    # min_ang: -0.582398 # -2.35619449019
+    # max_ang: 2.90699 # 2.35619449019
     range_min: 0.0
-    range_max: 100.0
-    use_binary_protocol: true
+    range_max: 25.0
+    laserscan_topic: "scan"
+    # use_binary_protocol: true
 
