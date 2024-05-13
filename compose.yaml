@@ -120,7 +120,7 @@ services:
     build:
       context: .
       target: common
-    command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py
+    command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py parent_frame:="cam_frame"
     environment:
       - DISPLAY
       - QT_X11_NO_MITSHM=1

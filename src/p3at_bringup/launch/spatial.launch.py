@@ -40,4 +40,6 @@ def generate_launch_description():
             output='both',
     )
 
-    return launch.LaunchDescription([container])
+    return launch.LaunchDescription([
+        container
+    ])
