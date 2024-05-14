@@ -5,6 +5,7 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "slam_toolbox/srv/save_map.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "std_msgs/msg/float32.hpp"
 
 using String = std_msgs::msg::String;
 using SaveMapServer = slam_toolbox::srv::SaveMap;
@@ -12,6 +13,7 @@ using Twist = geometry_msgs::msg::Twist;
 using Joy = sensor_msgs::msg::Joy;
 using Snapshot = rosbag2_interfaces::srv::Snapshot;
 using LaserScan = sensor_msgs::msg::LaserScan;
+using Float32 = std_msgs::msg::Float32;
 
 class JoyControlNode: public rclcpp::Node
 {
@@ -47,8 +49,12 @@ public:
         this->nav_twist_sub_ = this->create_subscription<Twist>("/nav_cmd_vel", 10,
             std::bind(&JoyControlNode::nav_velo_callback, this, std::placeholders::_1));
 
+        // Initiate Publishers:
+        // cmd_vel, gear, speed, and steering
         this->twist_pub_ = this->create_publisher<Twist>("/cmd_vel", 10);
-
+        this->gear_pub_ = this->create_publisher<String>("gear", 10);
+        this->safety_ = this->create_publisher<String>("safety", 10);
+        this->speed_pub_ = this->create_publisher<Float32>("speed", 10);
         RCLCPP_INFO(this->get_logger(), "Emergency Stop Node has been started");
     }
 
@@ -79,12 +85,18 @@ private:
     void joy_velo_callback(const Twist::SharedPtr msg){
         if (!this->stop_ && this->manual_){
             this->twist_pub_->publish(*msg);
+            Float32 speed;
+            speed.data = msg->linear.x;
+            this->speed_pub_->publish(speed);
         }
     }
 
     void nav_velo_callback(const Twist::SharedPtr msg){
         if (!this->stop_ && !this->manual_){
             this->twist_pub_->publish(*msg);
+            Float32 speed;
+            speed.data = msg->linear.x;
+            this->speed_pub_->publish(speed);
         }
     }
 
@@ -95,15 +107,27 @@ private:
         } else if (msg->axes[7] == 1.0 && this->safety_off_){
             this->safety_off_ = false;
             RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
+            String text;
+            text.data = "ON";
+            this->safety_->publish(text);
         } else if (msg->axes[7] == -1.0 && !this->safety_off_){
             this->safety_off_ = true;
             RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
+            String text;
+            text.data = "OFF";
+            this->safety_->publish(text);
         } else if (msg->buttons[0] == 1 && !this->manual_){
             this->manual_ = true;
             RCLCPP_INFO(this->get_logger(), "Manual Mode");
+            String text;
+            text.data = "Manual";
+            this->gear_pub_->publish(text);
         } else if (msg->buttons[1] == 1 && this->manual_){
             this->manual_ = false;
             RCLCPP_INFO(this->get_logger(), "Navigation Mode");
+            String text;
+            text.data = "Navigation";
+            this->gear_pub_->publish(text);
         }
     }
 
@@ -144,6 +168,9 @@ private:
         twist.linear.x = 0.0;
         twist.angular.z = 0.0;
         this->twist_pub_->publish(twist);
+        Float32 speed;
+        speed.data = 0.0;
+        this->speed_pub_->publish(speed);
     }
 
     void lidar_callback(const LaserScan::SharedPtr msg){
@@ -173,10 +200,11 @@ private:
     bool save_map_progress_;
     rclcpp::Subscription<LaserScan>::SharedPtr lidar_sub_;
     rclcpp::Subscription<Joy>::SharedPtr joy_sub_;
-    rclcpp::Subscription<Twist>::SharedPtr joy_twist_sub_;
-    rclcpp::Subscription<Twist>::SharedPtr nav_twist_sub_;
+    rclcpp::Subscription<Twist>::SharedPtr joy_twist_sub_, nav_twist_sub_;
 
     rclcpp::Publisher<Twist>::SharedPtr twist_pub_;
+    rclcpp::Publisher<String>::SharedPtr gear_pub_, safety_;
+    rclcpp::Publisher<Float32>::SharedPtr speed_pub_;
 };
 
 int main(int argc, char **argv)
