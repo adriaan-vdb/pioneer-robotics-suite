@@ -12,16 +12,14 @@ find_package(std_msgs REQUIRED)
 find_package(slam_toolbox REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_interfaces REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
-add_executable(joy_input src/joy_input.cpp)
-ament_target_dependencies(joy_input rclcpp std_msgs sensor_msgs slam_toolbox)
-
-add_executable(emergency_stop src/emergency_stop.cpp)
-ament_target_dependencies(emergency_stop rclcpp sensor_msgs rosbag2_interfaces)
+add_executable(joy_control src/joy_control.cpp)
+ament_target_dependencies(joy_control rclcpp sensor_msgs rosbag2_interfaces
+                          std_msgs slam_toolbox geometry_msgs)
 
 install(TARGETS
-  joy_input
-  emergency_stop
+  joy_control
   DESTINATION lib/${PROJECT_NAME}
 )
 

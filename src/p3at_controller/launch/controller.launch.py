@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    emer_params = os.path.join(get_package_share_directory("p3at_controller"), "config", "emergency.yaml")
+    joy_control_params = os.path.join(get_package_share_directory("p3at_controller"), "config", "joy_control.yaml")
     return LaunchDescription(
         [
             Node(
@@ -34,14 +34,9 @@ def generate_launch_description():
             ),
             Node(
                 package="p3at_cpp_nodes",
-                executable="joy_input",
-                name="joy_input_node",
+                executable="joy_control",
+                name="joy_control_node",
+                parameters=[joy_control_params]
             ),
-            Node(
-                package="p3at_cpp_nodes",
-                executable="emergency_stop",
-                name="emergency_node",
-                parameters=[emer_params]
-            )
         ]
     )
