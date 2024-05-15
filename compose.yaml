@@ -53,7 +53,7 @@ services:
       context: .
       target: common
     command: ros2 launch p3at_bringup display.launch.py
-    # privileged: True
+    privileged: True
     volumes:
       # - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
