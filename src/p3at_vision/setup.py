@@ -25,7 +25,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'imageRecognitionNode = p3at_vision.imageRecognitionNode:main'
+            'imageRecognitionNode = p3at_vision.imageRecognitionNode:main',
+            'digitRecognitionNode = p3at_vision.digitRecognitionNode:main'
         ],
     },
 )

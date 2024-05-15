@@ -11,6 +11,11 @@ def generate_launch_description():
                 executable="imageRecognitionNode",
             ),
 
+            Node(
+                package="p3at_vision",
+                executable="digitRecognitionNode",
+            ),
+
             # launch.actions.ExecuteProcess(
             #     cmd=['ros2', 'bag', 'record', '-o', 'SavedImages', '/photos_taken'],
             #     output='screen'

@@ -28,8 +28,6 @@ class imageRecognitionNode(Node):
         self.get_logger().info("Photo Taken")
     
     def listener_callback(self, msg):
-        
-        self.get_logger().info("Image recieved!")
 
         frame = self.br.imgmsg_to_cv2(msg)
 
@@ -87,9 +85,8 @@ class imageRecognitionNode(Node):
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
-        cv2.imshow("camera", frame)
-
-        cv2.waitKey(1)
+        # cv2.imshow("camera", frame)
+        # cv2.waitKey(1)
 
 def main(args=None):
     rclpy.init(args=args)
