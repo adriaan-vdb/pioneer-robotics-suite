@@ -53,7 +53,7 @@ services:
       context: .
       target: common
     command: ros2 launch p3at_bringup display.launch.py
-    # privileged: True
+    privileged: True
     volumes:
       # - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
@@ -120,7 +120,7 @@ services:
     build:
       context: .
       target: common
-    command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py
+    command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py parent_frame:="cam_frame"
     environment:
       - DISPLAY
       - QT_X11_NO_MITSHM=1

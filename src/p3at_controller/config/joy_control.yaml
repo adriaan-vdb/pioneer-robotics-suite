@@ -1,0 +1,5 @@
+joy_control_node:
+  ros__parameters:
+    range_min_check: -30.0
+    range_max_check: 30.0
+    keepout_range: 1.0
