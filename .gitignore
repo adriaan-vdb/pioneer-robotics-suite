@@ -3,4 +3,5 @@ install
 log
 AriaCoda
 src/p3at_test_pkg
+incidentRecord/*
 .EasyOCR
