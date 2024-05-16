@@ -16,6 +16,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(std_srvs REQUIRED)
 
 
 add_executable(odom_node2 src/odom_node2.cpp)

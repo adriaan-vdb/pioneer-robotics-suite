@@ -23,12 +23,12 @@ def generate_launch_description():
                 package="teleop_twist_joy",
                 executable="teleop_node",
                 name="teleop_twist_joy_node",
-                # remappings=[
-                #     ('/cmd_vel', '/joy_cmd_vel')
-                # ],
+                remappings=[
+                    ('/cmd_vel', '/joy_cmd_vel')
+                ],
                 parameters=[
                     os.path.join(
-                        get_package_share_directory("p3at_controller"), "config/controller.yaml"
+                        get_package_share_directory("p3at_controller"), "config", "controller.yaml"
                     )
                 ],
             ),

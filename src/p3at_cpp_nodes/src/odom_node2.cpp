@@ -67,7 +67,7 @@ private:
             this->current_imu_.orientation.w);
         tf2::Matrix3x3 m(p);
         m.getRPY(roll, pitch, yaw);
-        this->theta_ = yaw;
+        this->theta_ = -yaw;
 
         this->x_ += d_s * cos(this->theta_);
         this->y_ += d_s * sin(this->theta_);

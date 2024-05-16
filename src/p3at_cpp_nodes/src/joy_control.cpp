@@ -6,7 +6,9 @@
 #include "slam_toolbox/srv/save_map.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float32.hpp"
+#include "std_srvs/srv/trigger.hpp"
 
+using Trigger = std_srvs::srv::Trigger;
 using String = std_msgs::msg::String;
 using SaveMapServer = slam_toolbox::srv::SaveMap;
 using Twist = geometry_msgs::msg::Twist;
@@ -14,6 +16,7 @@ using Joy = sensor_msgs::msg::Joy;
 using Snapshot = rosbag2_interfaces::srv::Snapshot;
 using LaserScan = sensor_msgs::msg::LaserScan;
 using Float32 = std_msgs::msg::Float32;
+using namespace std::placeholders;
 
 class JoyControlNode: public rclcpp::Node
 {
@@ -32,6 +35,14 @@ public:
         // min index and max index of the lidar data
         this->min_index = 240 + this->converter(range_min_check);
         this->max_index = 240 + this->converter(range_max_check);
+
+        // Indicate callback service
+        this->callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+        this->toggle_stop_service_ = this->create_service<Trigger>(
+            "/p3at/toggle_stop",
+            std::bind(&JoyControlNode::toggle_stop_service, this, _1, _2),
+            rmw_qos_profile_services_default,
+            this->callback_group_);
 
         // min range of the lidar dataS
         this->min_range = -1.3962600231170654;
@@ -55,11 +66,22 @@ public:
         this->gear_pub_ = this->create_publisher<String>("gear", 10);
         this->safety_ = this->create_publisher<String>("safety", 10);
         this->speed_pub_ = this->create_publisher<Float32>("speed", 10);
-        RCLCPP_INFO(this->get_logger(), "Emergency Stop Node has been started");
+        RCLCPP_INFO(this->get_logger(), "Joy/Velocity Node has been started");
+
+        this->timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
+            std::bind(&JoyControlNode::publish_cmd_vel, this));
     }
 
 private:
 
+    void toggle_stop_service(const Trigger::Request::SharedPtr request,
+                            const Trigger::Response::SharedPtr response){
+        this->stop_ = !this->stop_;
+        response->success = true;
+        response->message = this->stop_ ? "Emergency Stop" : "Emergency Stop Released";
+    }
+
+    // Call the save map service
     void callSaveMapServer(){
         save_map_progress_ = true;
         auto client = this->create_client<SaveMapServer>("/slam_toolbox/save_map");
@@ -82,37 +104,40 @@ private:
         }
     }
 
+    // Record the velocity from the joystick if manual mode
     void joy_velo_callback(const Twist::SharedPtr msg){
         if (!this->stop_ && this->manual_){
-            this->twist_pub_->publish(*msg);
+            this->current_twist_ = *msg;
             Float32 speed;
             speed.data = msg->linear.x;
             this->speed_pub_->publish(speed);
         }
     }
 
+    // Record the velocity from the navigation if navigation mode
     void nav_velo_callback(const Twist::SharedPtr msg){
         if (!this->stop_ && !this->manual_){
-            this->twist_pub_->publish(*msg);
+            this->current_twist_ = *msg;
             Float32 speed;
             speed.data = msg->linear.x;
             this->speed_pub_->publish(speed);
         }
     }
 
+    // Record the joystick button and corresponding actions
     void joy_callback(const Joy::SharedPtr msg){
         if (msg->buttons[3] == 1 && this->stop_){
             RCLCPP_INFO(this->get_logger(), "Emergency Stop Released");
             this->stop_ = false;
         } else if (msg->axes[7] == 1.0 && this->safety_off_){
             this->safety_off_ = false;
-            RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
+            RCLCPP_WARN(this->get_logger(), "Safety %d", this->safety_off_ );
             String text;
             text.data = "ON";
             this->safety_->publish(text);
         } else if (msg->axes[7] == -1.0 && !this->safety_off_){
             this->safety_off_ = true;
-            RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
+            RCLCPP_WARN(this->get_logger(), "Safety %d", this->safety_off_ );
             String text;
             text.data = "OFF";
             this->safety_->publish(text);
@@ -128,9 +153,13 @@ private:
             String text;
             text.data = "Navigation";
             this->gear_pub_->publish(text);
+        } else if (msg->buttons[2] == 1 && !this->save_map_progress_){
+            RCLCPP_INFO(this->get_logger(), "Saving Map");
+            threads_.push_back(std::thread(std::bind(&JoyControlNode::callSaveMapServer, this)));
         }
     }
 
+    // Call the snapshot service
     void callSnapshot(){
         auto client = this->create_client<Snapshot>("/rosbag2_recorder/snapshot");
         while (!client->wait_for_service(std::chrono::seconds(1))){
@@ -151,6 +180,7 @@ private:
         }
     }
 
+    // Lidar verification
     bool verify_lidar_data(LaserScan scan, float value){
         if (value < scan.range_min || value > scan.range_max){
             return false;
@@ -158,21 +188,33 @@ private:
         return true;
     }
 
+    // Convert degrees to radians
     int converter(float degrees){
         double radian = degrees * M_PI / 180;
         return (int) (radian / 0.004370140843093395);
     }
 
+    // Constantly publish the current twist mesaage (40 Hz)
+    void publish_cmd_vel(){
+        if (this->stop_){
+            this->emergency_stop();
+        }
+        // RCLCPP_INFO(this->get_logger(), "%d", this->stop_ );
+        this->twist_pub_->publish(this->current_twist_);
+    }
+
+    // Apply emergency stop which publish twist 0 0 0
     void emergency_stop(){
         Twist twist;
         twist.linear.x = 0.0;
         twist.angular.z = 0.0;
-        this->twist_pub_->publish(twist);
+        this->current_twist_ = twist;
         Float32 speed;
         speed.data = 0.0;
         this->speed_pub_->publish(speed);
     }
 
+    // Constantly checking lidar data
     void lidar_callback(const LaserScan::SharedPtr msg){
         auto ranges = msg->ranges;
         for (int i = this->min_index; i < this->max_index; i++){
@@ -198,6 +240,9 @@ private:
 
     bool stop_, safety_off_, manual_;
     bool save_map_progress_;
+
+    // Keep record of the latest twist message
+    Twist current_twist_;
     rclcpp::Subscription<LaserScan>::SharedPtr lidar_sub_;
     rclcpp::Subscription<Joy>::SharedPtr joy_sub_;
     rclcpp::Subscription<Twist>::SharedPtr joy_twist_sub_, nav_twist_sub_;
@@ -205,6 +250,10 @@ private:
     rclcpp::Publisher<Twist>::SharedPtr twist_pub_;
     rclcpp::Publisher<String>::SharedPtr gear_pub_, safety_;
     rclcpp::Publisher<Float32>::SharedPtr speed_pub_;
+
+    rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Service<Trigger>::SharedPtr toggle_stop_service_;
+    rclcpp::CallbackGroup::SharedPtr callback_group_;
 };
 
 int main(int argc, char **argv)
