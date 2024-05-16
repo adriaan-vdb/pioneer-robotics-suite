@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz_common/Displays
-    Help Height: 138
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -12,7 +12,7 @@ Panels:
         - /Map1
         - /Map1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 1276
+    Tree Height: 289
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -30,7 +30,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -57,8 +57,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_footprint:
-          Value: true
         base_link:
           Value: true
         cam_frame:
@@ -67,9 +65,27 @@ Visualization Manager:
           Value: true
         chassis:
           Value: true
+        imu_link:
+          Value: true
         laser_frame:
           Value: true
-        odom:
+        oak:
+          Value: true
+        oak_imu_frame:
+          Value: true
+        oak_left_camera_frame:
+          Value: true
+        oak_left_camera_optical_frame:
+          Value: true
+        oak_model_origin:
+          Value: true
+        oak_rgb_camera_frame:
+          Value: true
+        oak_rgb_camera_optical_frame:
+          Value: true
+        oak_right_camera_frame:
+          Value: true
+        oak_right_camera_optical_frame:
           Value: true
         p3at_back_left_axle:
           Value: true
@@ -95,10 +111,6 @@ Visualization Manager:
           Value: true
         p3at_front_right_wheel:
           Value: true
-        pioneer3at_body/base_footprint:
-          Value: true
-        pioneer3at_body/base_link:
-          Value: true
         top_plate:
           Value: true
       Marker Scale: 1
@@ -112,6 +124,20 @@ Visualization Manager:
             cam_frame:
               cam_optical_link:
                 {}
+              oak:
+                oak_imu_frame:
+                  {}
+                oak_left_camera_frame:
+                  oak_left_camera_optical_frame:
+                    {}
+                oak_model_origin:
+                  {}
+                oak_rgb_camera_frame:
+                  oak_rgb_camera_optical_frame:
+                    {}
+                oak_right_camera_frame:
+                  oak_right_camera_optical_frame:
+                    {}
             laser_frame:
               {}
           p3at_back_left_axle:
@@ -131,7 +157,8 @@ Visualization Manager:
               p3at_front_right_wheel:
                 {}
           top_plate:
-            {}
+            imu_link:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -152,89 +179,47 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         cam_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        cam_optical_link:
+        oak:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        chassis:
+        oak_imu_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        laser_frame:
+        oak_left_camera_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        p3at_back_left_axle:
+        oak_left_camera_optical_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        p3at_back_left_hub:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        p3at_back_right_axle:
+        oak_model_origin:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        p3at_back_right_hub:
+        oak_rgb_camera_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        p3at_back_right_wheel:
+        oak_rgb_camera_optical_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        p3at_front_left_axle:
+        oak_right_camera_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        p3at_front_left_hub:
+        oak_right_camera_optical_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        p3at_front_left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        p3at_front_right_axle:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_right_hub:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        top_plate:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Mass Properties:
         Inertia: false
         Mass: false
@@ -277,20 +262,6 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Class: rviz_default_plugins/Image
-      Enabled: true
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera
-      Value: true
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
       Color Scheme: map
@@ -311,6 +282,34 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /map_updates
       Use Timestamp: false
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /digits_image
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /red_yellow_image
       Value: true
   Enabled: true
   Global Options:
@@ -381,12 +380,12 @@ Visualization Manager:
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 2032
+  Height: 1016
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001f7000006eefc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000b000fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006e000005f40000018200fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065010000066e000000ee0000004a00ffffff000000010000015f000006eefc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006e000006ee0000013200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000e740000005afc0100000002fb0000000800540069006d0065010000000000000e740000058100fffffffb0000000800540069006d0065010000000000000450000000000000000000000b06000006ee00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001f700000342fc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001b500000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003b0000015c000000c700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065000000030e0000006f0000000000000000fb0000000a0049006d006100670065010000019d000000ef0000002800fffffffb0000000a0049006d0061006700650100000292000000eb0000002800ffffff000000010000015f00000342fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003b00000342000000a000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073a0000005afc0100000002fb0000000800540069006d006501000000000000073a0000025300fffffffb0000000800540069006d00650100000000000004500000000000000000000003d80000034200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -395,6 +394,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 3700
-  X: 140
-  Y: 54
+  Width: 1850
+  X: 70
+  Y: 27

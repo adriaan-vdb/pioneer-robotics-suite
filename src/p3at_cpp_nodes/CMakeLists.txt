@@ -13,6 +13,13 @@ find_package(slam_toolbox REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2 REQUIRED)
+
+
+add_executable(odom_node2 src/odom_node2.cpp)
+ament_target_dependencies(odom_node2 rclcpp geometry_msgs nav_msgs tf2_ros tf2 sensor_msgs)
 
 add_executable(joy_control src/joy_control.cpp)
 ament_target_dependencies(joy_control rclcpp sensor_msgs rosbag2_interfaces
@@ -20,6 +27,7 @@ ament_target_dependencies(joy_control rclcpp sensor_msgs rosbag2_interfaces
 
 install(TARGETS
   joy_control
+  odom_node2
   DESTINATION lib/${PROJECT_NAME}
 )
 

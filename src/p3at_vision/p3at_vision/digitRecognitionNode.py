@@ -24,6 +24,8 @@ class digitRecognitionNode(Node):
 
         self.reader = easyocr.Reader(['en'])
 
+        self.image_publisher = self.create_publisher(Image, 'digits_image', 10)
+
     
     def listener_callback(self, msg):
         self.get_logger().info("Image recieved!")
@@ -85,9 +87,9 @@ class digitRecognitionNode(Node):
 
 
         # Display the image with detected digits
-        cv2.imshow("Detected Digits", cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        cv2.waitKey(1)
-
+        # cv2.imshow("Detected Digits", cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        # cv2.waitKey(1)
+        self.image_publisher.publish(self.br.cv2_to_imgmsg(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)))
         # cv2.imshow("Document Scanner", img)
         # cv2.waitKey(1)
 

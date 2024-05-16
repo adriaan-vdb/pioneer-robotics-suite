@@ -20,6 +20,8 @@ class imageRecognitionNode(Node):
 
         self.object_publisher = self.create_publisher(ObjectInfo, 'identified_objects', 10)
 
+        self.image_publisher = self.create_publisher(Image, 'red_yellow_image', 10)
+
         self.br = CvBridge()
 
     
@@ -86,7 +88,9 @@ class imageRecognitionNode(Node):
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
         # cv2.imshow("camera", frame)
+        self.image_publisher.publish(self.br.cv2_to_imgmsg(frame))
         # cv2.waitKey(1)
+
 
 def main(args=None):
     rclpy.init(args=args)

@@ -97,18 +97,18 @@ services:
     devices:
       - "/dev/bus/usb:/dev/bus/usb"
 
-  p3at_localization:
-    image: ${IMAGE}:${TAG}
-    container_name: p3at_localization
-    network_mode: host
-    build:
-      context: .
-      target: common
-    command: ros2 launch p3at_bringup localization.launch.py
-    volumes:
-      - type: bind
-        source: /dev/shm
-        target: /dev/shm
+  # p3at_localization:
+  #   image: ${IMAGE}:${TAG}
+  #   container_name: p3at_localization
+  #   network_mode: host
+  #   build:
+  #     context: .
+  #     target: common
+  #   command: ros2 launch p3at_bringup localization.launch.py
+  #   volumes:
+  #     - type: bind
+  #       source: /dev/shm
+  #       target: /dev/shm
   
   p3at_vision:
     image: ${IMAGE}:${TAG}

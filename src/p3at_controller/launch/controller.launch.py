@@ -38,5 +38,9 @@ def generate_launch_description():
                 name="joy_control_node",
                 parameters=[joy_control_params]
             ),
+            Node(
+                package="p3at_cpp_nodes",
+                executable="odom_node2"
+            )
         ]
     )
