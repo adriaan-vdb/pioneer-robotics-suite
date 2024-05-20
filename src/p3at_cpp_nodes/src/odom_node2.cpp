@@ -29,7 +29,7 @@ public:
         this->tf_broadcaster_ = std::make_unique<TransBroadcaster>(*this);
         this->tf.header.frame_id = "odom";
         this->tf.child_frame_id = "base_link";
-        this->prev_time_ = this->get_clock()->now();
+        this->prev_time_ = this->current_imu_.header.stamp;
         this->tf.header.stamp = this->prev_time_;
         this->tf.transform.translation.x = 0.0;
         this->tf.transform.translation.y = 0.0;

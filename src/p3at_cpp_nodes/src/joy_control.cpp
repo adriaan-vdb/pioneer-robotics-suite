@@ -45,7 +45,7 @@ public:
             this->callback_group_);
 
         // min range of the lidar dataS
-        this->min_range = -1.570874810218811;
+        this->min_range = -1.570870041847229;
         this->stop_ = false;
         this->safety_off_ = false;
         this->manual_ = true;
@@ -68,7 +68,7 @@ public:
         this->speed_pub_ = this->create_publisher<Float32>("speed", 10);
         RCLCPP_INFO(this->get_logger(), "Joy/Velocity Node has been started");
 
-        this->timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
+        this->timer_ = this->create_wall_timer(std::chrono::milliseconds(25),
             std::bind(&JoyControlNode::publish_cmd_vel, this));
     }
 
@@ -131,13 +131,13 @@ private:
             this->stop_ = false;
         } else if (msg->axes[7] == 1.0 && this->safety_off_){
             this->safety_off_ = false;
-            RCLCPP_WARN(this->get_logger(), "Safety %d", this->safety_off_ );
+            RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
             String text;
             text.data = "ON";
             this->safety_->publish(text);
         } else if (msg->axes[7] == -1.0 && !this->safety_off_){
             this->safety_off_ = true;
-            RCLCPP_WARN(this->get_logger(), "Safety %d", this->safety_off_ );
+            RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
             String text;
             text.data = "OFF";
             this->safety_->publish(text);
@@ -191,7 +191,7 @@ private:
     // Convert degrees to radians
     int converter(float degrees){
         double radian = degrees * M_PI / 180;
-        return (int) (radian / 0.00006172839493956417);
+        return (int) (radian / 0.005817166529595852);
     }
 
     // Constantly publish the current twist mesaage (40 Hz)
@@ -199,7 +199,6 @@ private:
         if (this->stop_){
             this->emergency_stop();
         }
-        // RCLCPP_INFO(this->get_logger(), "%d", this->stop_ );
         this->twist_pub_->publish(this->current_twist_);
     }
 

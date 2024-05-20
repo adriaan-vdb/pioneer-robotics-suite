@@ -28,10 +28,14 @@ ament_target_dependencies(joy_control rclcpp sensor_msgs rosbag2_interfaces
 add_executable(test_lidar src/test_lidar.cpp)
 ament_target_dependencies(test_lidar rclcpp sensor_msgs)
 
+add_executable(explore src/explore.cpp)
+ament_target_dependencies(explore rclcpp geometry_msgs sensor_msgs)
+
 install(TARGETS
   joy_control
   odom_node2
   test_lidar
+  explore
   DESTINATION lib/${PROJECT_NAME}
 )
 

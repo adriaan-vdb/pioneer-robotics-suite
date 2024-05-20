@@ -31,7 +31,8 @@ class digitRecognitionNode(Node):
     def __init__(self):
         super().__init__('digit_recognition_node')
 
-        self.subscriber = self.create_subscription(Image, 'oak/rgb/image_raw', self.listener_callback, 1)
+        # self.subscriber = self.create_subscription(Image, 'oak/rgb/image_raw', self.listener_callback, 1) # Real Robot
+        self.subscriber = self.create_subscription(Image, 'p3at/camera/image_raw', self.listener_callback, 1) # Simulation 
 
         self.publisher = self.create_publisher(Int32, 'digits', 10)
 
