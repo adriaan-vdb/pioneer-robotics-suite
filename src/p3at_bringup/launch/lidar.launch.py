@@ -28,5 +28,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        launch_lidar
+        launch_lidar,
+        # Node(
+        #     package="p3at_cpp_nodes",
+        #     executable="test_lidar"
+        # )
     ])

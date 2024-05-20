@@ -33,8 +33,8 @@ public:
         double range_max_check = this->get_parameter("range_max_check").as_double();
 
         // min index and max index of the lidar data
-        this->min_index = 240 + this->converter(range_min_check);
-        this->max_index = 240 + this->converter(range_max_check);
+        this->min_index = 270 + this->converter(range_min_check);
+        this->max_index = 270 + this->converter(range_max_check);
 
         // Indicate callback service
         this->callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
@@ -45,7 +45,7 @@ public:
             this->callback_group_);
 
         // min range of the lidar dataS
-        this->min_range = -1.3962600231170654;
+        this->min_range = -1.570874810218811;
         this->stop_ = false;
         this->safety_off_ = false;
         this->manual_ = true;
@@ -191,7 +191,7 @@ private:
     // Convert degrees to radians
     int converter(float degrees){
         double radian = degrees * M_PI / 180;
-        return (int) (radian / 0.004370140843093395);
+        return (int) (radian / 0.00006172839493956417);
     }
 
     // Constantly publish the current twist mesaage (40 Hz)

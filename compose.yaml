@@ -91,13 +91,13 @@ services:
     build:
       context: .
       target: common
-    command: bash -c "cd ../incidentRecord && ros2 bag record --snapshot-mode -a"
+    command: sh -c "cd ../incidentRecord && ros2 bag record --snapshot-mode -a"
     volumes:
       - type: bind
         source: /dev/shm
         target: /dev/shm
       - type: bind
-        source: ./incidentRecord
+        source: ../incidentRecord
         target: $WORKSPACE/../incidentRecord
 
   p3at_lidar:

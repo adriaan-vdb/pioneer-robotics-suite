@@ -11,7 +11,7 @@ RUN apt-get update \
     && apt-get -y install \
     wget ros-humble-navigation2 ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-nav2-bringup ros-humble-teleop-twist-joy ros-humble-depthai-ros-driver\
     ros-humble-robot-localization ros-humble-joy-linux ros-humble-cyclonedds ros-humble-phidgets-spatial ros-humble-sick-scan-xd ros-humble-pointcloud-to-laserscan \
-    doxygen libxcb-xinerama0 ros-humble-xacro vim \
+    doxygen libxcb-xinerama0 ros-humble-xacro vim ros-humble-tf-transformations \
     # libxcb* \
     && apt-get autoremove -y \
     && apt-get clean \
@@ -21,7 +21,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && pip3 inst
 
 # RUN pip3 install yolov8
 
-RUN pip3 install numpy && pip3 install pillow && pip3 install easyocr
+RUN pip3 install numpy && pip3 install pillow && pip3 install easyocr && pip3 install transforms3d
 
 # RUN  "source /path/to/ros_entrypoint.sh"
 
@@ -45,6 +45,8 @@ RUN gpasswd --add ros dialout
 # COPY --chown=ros default.rviz /home/ros/.rviz2/default.rviz
 
 COPY .EasyOCR /home/ros/.EasyOCR
+
+RUN chmod 777 /home/ros/.EasyOCR/
 
 COPY --chown=ros ros_entrypoint.sh /ros_entrypoint.sh
 RUN chmod +x  /ros_entrypoint.sh
