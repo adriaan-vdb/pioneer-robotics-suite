@@ -20,6 +20,11 @@ def generate_launch_description():
                 package="p3at_vision",
                 executable="marker_node",
             ),
+            Node(
+                package="p3at_vision",
+                executable="obstacle_detector",
+            ),
+        
             # launch.actions.ExecuteProcess(
             #     cmd=['ros2', 'bag', 'record', '-o', 'SavedImages', '/photos_taken'],
             #     output='screen'

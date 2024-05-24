@@ -1,0 +1,6 @@
+float32 left_distance
+float32 left_angle
+float32 middle_distance
+float32 middle_angle
+float32 right_distance
+float32 right_angle

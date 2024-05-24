@@ -18,7 +18,7 @@ class MarkerNode(Node):
 
     def listener_callback(self, msg):
         marker = RVizMarker()
-        marker.header.frame_id = "odom"
+        marker.header.frame_id = "map"
         marker.header.stamp = self.get_clock().now().to_msg()
 
         marker.id = len(self.markers)
@@ -52,7 +52,7 @@ class MarkerNode(Node):
                 marker.color.b = 0.0
                 marker.color.a = 1.0
         
-        if msg.description in [str(i) for i in range(10)]:
+        if msg.number in [i for i in range(10)]:
             marker.ns = "basic_shapes"
             marker.type = RVizMarker.CUBE
             self.get_logger().info('\n------ Digit Added ------')
@@ -72,7 +72,7 @@ class MarkerNode(Node):
 
 
             text_marker = RVizMarker()
-            text_marker.header.frame_id = "odom"
+            text_marker.header.frame_id = "map"
             text_marker.header.stamp = self.get_clock().now().to_msg()
             text_marker.ns = "digits"
             text_marker.id = len(self.markers)
@@ -93,7 +93,7 @@ class MarkerNode(Node):
             text_marker.color.b = 0.0
             text_marker.color.a = 1.0
 
-            text_marker.text = msg.description
+            text_marker.text = str(msg.number)
 
             self.markers.append(text_marker)  # Add the text marker to the list
 

@@ -15,19 +15,19 @@ services:
         source: /dev/shm
         target: /dev/shm
 
-  # p3at_low_level:
-  #   image: ${IMAGE}:${TAG}
-  #   container_name: p3at_low_level
-  #   network_mode: host
-  #   devices: ["/dev/ttyUSB0:/dev/ttyS0"]
-  #   build:
-  #     context: .
-  #     target: common
-  #   command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
-  #   volumes:
-  #     - type: bind
-  #       source: /dev/shm
-  #       target: /dev/shm
+  p3at_low_level:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_low_level
+    network_mode: host
+    devices: ["/dev/ttyUSB0:/dev/ttyS0"]
+    build:
+      context: .
+      target: common
+    command: ros2 run ariaNode ariaNode -rp /dev/ttyS0
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
 
   p3at_navigation:
     image: ${IMAGE}:${TAG}
@@ -37,6 +37,7 @@ services:
       context: .
       target: common
     command: bash -c "cd src/p3at_bringup/maps && ros2 launch p3at_bringup slam.launch.py"
+    # command: bash -c " sleep 1 && ros2 launch p3at_bringup bringup.launch.py"
     volumes:
       - type: bind
         source: /dev/shm
@@ -44,6 +45,37 @@ services:
       - type: bind
         source: src/p3at_bringup/maps
         target: $WORKSPACE/src/p3at_bringup/maps
+
+  p3at_navigation2:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_navigation2
+    network_mode: host
+    build:
+      context: .
+      target: common
+    # command: bash -c "cd src/p3at_bringup/maps && ros2 launch p3at_bringup slam.launch.py"
+    command: ros2 launch p3at_bringup navigation.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm  
+      - type: bind
+        source: src/p3at_bringup/maps
+        target: $WORKSPACE/src/p3at_bringup/maps
+
+  p3at_goal:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_goal
+    network_mode: host
+    build:
+      context: .
+      target: common
+    # command: bash -c "cd src/p3at_bringup/maps && ros2 launch p3at_bringup slam.launch.py"
+    command: ros2 launch p3at_bringup exploring.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm  
 
   p3at_display:
     image: ${IMAGE}:${TAG}
@@ -56,6 +88,7 @@ services:
       context: .
       target: common
     command: ros2 launch p3at_bringup display.launch.py
+    # command: ros2 launch nav2_bringup rviz_launch.py
     privileged: True
     volumes:
       # - /tmp/.X11-unix:/tmp/.X11-unix:rw
@@ -67,26 +100,26 @@ services:
         source: src/p3at_bringup/rviz
         target: $WORKSPACE/src/p3at_bringup/rviz
 
-  # p3at_sensors:
-  #   image: ${IMAGE}:${TAG}
-  #   container_name: p3at_sensors
-  #   network_mode: host
-  #   devices:
-  #     - "/dev/bus/usb:/dev/bus/usb"
-  #   build:
-  #     context: .
-  #     target: common
-  #   command: ros2 launch p3at_bringup spatial.launch.py
-  #   volumes:
-  #     - type: bind
-  #       source: /dev/shm
-  #       target: /dev/shm
-  #     - type: bind
-  #       source: /dev
-  #       target: /dev
-  #     - type: bind
-  #       source: /dev/bus/usb
-  #       target: /dev/bus/usb
+  p3at_sensors:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_sensors
+    network_mode: host
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    build:
+      context: .
+      target: common
+    command: ros2 launch p3at_bringup spatial.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+      - type: bind
+        source: /dev
+        target: /dev
+      - type: bind
+        source: /dev/bus/usb
+        target: /dev/bus/usb
 
   p3at_snapshot:
     image: ${IMAGE}:${TAG}
@@ -103,23 +136,23 @@ services:
         source: /dev/shm
         target: /dev/shm
       - type: bind
-        source: incidentRecord
+        source: ../incidentRecord
         target: $WORKSPACE/incidentRecord
 
-  # p3at_lidar:
-  #   image: ${IMAGE}:${TAG}
-  #   container_name: p3at_lidar
-  #   network_mode: host
-  #   build:
-  #     context: .
-  #     target: common
-  #   command: ros2 launch p3at_bringup lidar.launch.py
-  #   volumes:
-  #     - type: bind
-  #       source: /dev/shm
-  #       target: /dev/shm
-  #   devices:
-  #     - "/dev/bus/usb:/dev/bus/usb"
+  p3at_lidar:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_lidar
+    network_mode: host
+    build:
+      context: .
+      target: common
+    command: ros2 launch p3at_bringup lidar.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
 
   # p3at_localization:
   #   image: ${IMAGE}:${TAG}
@@ -134,36 +167,36 @@ services:
   #       source: /dev/shm
   #       target: /dev/shm
   
-  # p3at_vision:
-  #   image: ${IMAGE}:${TAG}
-  #   container_name: p3at_vision
-  #   network_mode: host
-  #   devices:
-  #     - "/dev/bus/usb:/dev/bus/usb"
-  #     # - "c 189:* rmw"
-  #   build:
-  #     context: .
-  #     target: common
-  #   command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py parent_frame:="cam_frame"
-  #   environment:
-  #     - DISPLAY
-  #     - QT_X11_NO_MITSHM=1
-  #     - XAUTHORITY
-  #   volumes:
-  #     - type: bind
-  #       source: /dev/shm
-  #       target: /dev/shm
-  #     - type: bind
-  #       source: /dev
-  #       target: /dev
-  #     - type: bind
-  #       source: /dev/bus/usb
-  #       target: /dev/bus/usb
-  #     - /tmp/.X11-unix:/tmp/.X11-unix:rw
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #   privileged: True
-  #   device_cgroup_rules:
-  #     - "c 189:* rmw"
+  p3at_vision:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_vision
+    network_mode: host
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+      # - "c 189:* rmw"
+    build:
+      context: .
+      target: common
+    command: ros2 launch depthai_ros_driver rgbd_pcl.launch.py parent_frame:="cam_frame"
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+      - type: bind
+        source: /dev
+        target: /dev
+      - type: bind
+        source: /dev/bus/usb
+        target: /dev/bus/usb
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+    privileged: True
+    device_cgroup_rules:
+      - "c 189:* rmw"
   
   p3at_recognition:
     image: ${IMAGE}:${TAG}
@@ -190,6 +223,9 @@ services:
       - type: bind
         source: /dev/bus/usb
         target: /dev/bus/usb
+      - type: bind
+        source: ../SavedImages
+        target: $WORKSPACE/SavedImages
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
     privileged: True

@@ -24,9 +24,8 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && pip3 inst
 RUN pip3 install numpy && pip3 install pillow && pip3 install easyocr && pip3 install transforms3d
 
 # RUN  "source /path/to/ros_entrypoint.sh"
-
-
 RUN pip3 install opencv-python
+RUN apt-get update && apt-get -y install ros-humble-rmw-cyclonedds-cpp
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++
 FROM base as common

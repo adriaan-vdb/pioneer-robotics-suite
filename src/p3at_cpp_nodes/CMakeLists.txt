@@ -8,15 +8,19 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(slam_toolbox REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(p3at_interface REQUIRED)
 
 
 add_executable(odom_node2 src/odom_node2.cpp)
@@ -24,14 +28,19 @@ ament_target_dependencies(odom_node2 rclcpp geometry_msgs nav_msgs tf2_ros tf2 s
 
 add_executable(joy_control src/joy_control.cpp)
 ament_target_dependencies(joy_control rclcpp sensor_msgs rosbag2_interfaces
-                          std_msgs slam_toolbox geometry_msgs)
+                          std_msgs slam_toolbox geometry_msgs std_srvs)
 add_executable(test_lidar src/test_lidar.cpp)
 ament_target_dependencies(test_lidar rclcpp sensor_msgs)
 
 add_executable(explore src/explore.cpp)
-ament_target_dependencies(explore rclcpp geometry_msgs sensor_msgs)
+ament_target_dependencies(explore rclcpp geometry_msgs sensor_msgs tf2 p3at_interface std_msgs)
+
+add_executable(goal_client src/goal_client.cpp)
+ament_target_dependencies(goal_client rclcpp rclcpp_action nav2_msgs geometry_msgs
+                          std_srvs p3at_interface tf2 std_msgs)
 
 install(TARGETS
+  goal_client
   joy_control
   odom_node2
   test_lidar
