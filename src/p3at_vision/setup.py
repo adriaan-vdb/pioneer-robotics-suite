@@ -26,7 +26,10 @@ setup(
     entry_points={
         'console_scripts': [
             'imageRecognitionNode = p3at_vision.imageRecognitionNode:main',
-            'digitRecognitionNode = p3at_vision.digitRecognitionNode:main'
+            'digitRecognitionNode = p3at_vision.digitRecognitionNode:main',
+            'marker_node = p3at_vision.marker_node:main',
+            'obstacle_detector = p3at_vision.obstacle_detector:main',
+            'gui = p3at_vision.gui:main',
         ],
     },
 )

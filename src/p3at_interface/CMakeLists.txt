@@ -14,6 +14,8 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ObjectInfo.msg"
+  "msg/Distance.msg"
+  "msg/TargetGoal.msg"
 )
 
 if(BUILD_TESTING)

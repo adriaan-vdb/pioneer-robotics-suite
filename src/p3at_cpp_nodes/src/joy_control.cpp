@@ -33,19 +33,14 @@ public:
         double range_max_check = this->get_parameter("range_max_check").as_double();
 
         // min index and max index of the lidar data
-        this->min_index = 240 + this->converter(range_min_check);
-        this->max_index = 240 + this->converter(range_max_check);
+        this->min_index = 270 + this->converter(range_min_check);
+        this->max_index = 270 + this->converter(range_max_check);
 
         // Indicate callback service
         this->callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-        this->toggle_stop_service_ = this->create_service<Trigger>(
-            "/p3at/toggle_stop",
-            std::bind(&JoyControlNode::toggle_stop_service, this, _1, _2),
-            rmw_qos_profile_services_default,
-            this->callback_group_);
 
         // min range of the lidar dataS
-        this->min_range = -1.3962600231170654;
+        this->min_range = -1.570870041847229;
         this->stop_ = false;
         this->safety_off_ = false;
         this->manual_ = true;
@@ -67,18 +62,21 @@ public:
         this->safety_ = this->create_publisher<String>("safety", 10);
         this->speed_pub_ = this->create_publisher<Float32>("speed", 10);
         RCLCPP_INFO(this->get_logger(), "Joy/Velocity Node has been started");
+        this->dead_man_ = false;
 
-        this->timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
+        this->timer_ = this->create_wall_timer(std::chrono::milliseconds(25),
             std::bind(&JoyControlNode::publish_cmd_vel, this));
+
+        this->canceling_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+            std::bind(&JoyControlNode::cancel, this));
     }
 
 private:
 
-    void toggle_stop_service(const Trigger::Request::SharedPtr request,
-                            const Trigger::Response::SharedPtr response){
-        this->stop_ = !this->stop_;
-        response->success = true;
-        response->message = this->stop_ ? "Emergency Stop" : "Emergency Stop Released";
+    void cancel(){
+        if (this->cancel_goal_progress_){
+            threads_.push_back(std::thread(std::bind(&JoyControlNode::callCancelGoal, this)));
+        }
     }
 
     // Call the save map service
@@ -104,6 +102,30 @@ private:
         }
     }
 
+    // Call cancel goal
+    void callCancelGoal(){
+        this->cancel_goal_progress_ = true;
+        auto client = this->create_client<Trigger>("/cancel_goal");
+        while (!client->wait_for_service(std::chrono::seconds(1))){
+            RCLCPP_WARN(this->get_logger(), "Waiting for the cancel goal server to be up...");
+        }
+
+        auto request = std::make_shared<Trigger::Request>();
+        auto future = client->async_send_request(request);
+        try {
+            auto response = future.get();
+            if (response->success){
+                RCLCPP_INFO(this->get_logger(), "Goal Canceled");
+            } else {
+                RCLCPP_ERROR(this->get_logger(), "Error while canceling the goal");
+            }
+            this->cancel_goal_progress_ = false;
+        } catch (const std::exception &e) {
+            RCLCPP_ERROR(this->get_logger(), "Error while calling the service");
+            this->cancel_goal_progress_ = false;
+        }
+    }
+
     // Record the velocity from the joystick if manual mode
     void joy_velo_callback(const Twist::SharedPtr msg){
         if (!this->stop_ && this->manual_){
@@ -117,27 +139,43 @@ private:
     // Record the velocity from the navigation if navigation mode
     void nav_velo_callback(const Twist::SharedPtr msg){
         if (!this->stop_ && !this->manual_){
-            this->current_twist_ = *msg;
-            Float32 speed;
-            speed.data = msg->linear.x;
-            this->speed_pub_->publish(speed);
+            if (this->dead_man_){
+                this->current_twist_ = *msg;
+                Float32 speed;
+                speed.data = msg->linear.x;
+                this->speed_pub_->publish(speed);
+            } else {
+                Twist twist;
+                twist.linear.x = 0.0;
+                twist.angular.z = 0.0;
+                this->current_twist_ = twist;
+            }
         }
     }
 
     // Record the joystick button and corresponding actions
     void joy_callback(const Joy::SharedPtr msg){
+        if (msg->buttons[7] == 1){
+            this->dead_man_ = true;
+            RCLCPP_INFO(this->get_logger(), "DEADMAN");
+        }
+        else {
+            this->dead_man_ = false;
+            RCLCPP_INFO(this->get_logger(), "NO_DEADMAN");
+        }
+
         if (msg->buttons[3] == 1 && this->stop_){
             RCLCPP_INFO(this->get_logger(), "Emergency Stop Released");
             this->stop_ = false;
         } else if (msg->axes[7] == 1.0 && this->safety_off_){
             this->safety_off_ = false;
-            RCLCPP_WARN(this->get_logger(), "Safety %d", this->safety_off_ );
+            RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
             String text;
             text.data = "ON";
             this->safety_->publish(text);
         } else if (msg->axes[7] == -1.0 && !this->safety_off_){
             this->safety_off_ = true;
-            RCLCPP_WARN(this->get_logger(), "Safety %d", this->safety_off_ );
+            RCLCPP_WARN(this->get_logger(), "Safety %s", this->safety_off_ ? "OFF" : "ON");
             String text;
             text.data = "OFF";
             this->safety_->publish(text);
@@ -156,6 +194,10 @@ private:
         } else if (msg->buttons[2] == 1 && !this->save_map_progress_){
             RCLCPP_INFO(this->get_logger(), "Saving Map");
             threads_.push_back(std::thread(std::bind(&JoyControlNode::callSaveMapServer, this)));
+        } else if (msg->buttons[5] == 1 && !this->cancel_goal_progress_){
+            RCLCPP_INFO(this->get_logger(), "Canceling Goal");
+            this->cancel_goal_progress_ = true;
+            // threads_.push_back(std::thread(std::bind(&JoyControlNode::callCancelGoal, this)));
         }
     }
 
@@ -191,7 +233,7 @@ private:
     // Convert degrees to radians
     int converter(float degrees){
         double radian = degrees * M_PI / 180;
-        return (int) (radian / 0.004370140843093395);
+        return (int) (radian / 0.005817166529595852);
     }
 
     // Constantly publish the current twist mesaage (40 Hz)
@@ -199,7 +241,6 @@ private:
         if (this->stop_){
             this->emergency_stop();
         }
-        // RCLCPP_INFO(this->get_logger(), "%d", this->stop_ );
         this->twist_pub_->publish(this->current_twist_);
     }
 
@@ -219,8 +260,9 @@ private:
         auto ranges = msg->ranges;
         for (int i = this->min_index; i < this->max_index; i++){
             if (verify_lidar_data(*msg, ranges[i])){
-                if (ranges[i] < this->range){
+                if (ranges[i] < this->range && ranges[i] > 0.1){
                     if (!this->stop_ && !this->safety_off_){
+                        RCLCPP_WARN(this->get_logger(), "Obstacle Detected at %.2f of index %d", ranges[i], i);
                         this->stop_ = true;
                         this->emergency_stop();
                         RCLCPP_INFO(this->get_logger(), "Taking Snapshot");
@@ -239,7 +281,7 @@ private:
     std::vector<std::thread> threads_;
 
     bool stop_, safety_off_, manual_;
-    bool save_map_progress_;
+    bool save_map_progress_, dead_man_, cancel_goal_progress_;
 
     // Keep record of the latest twist message
     Twist current_twist_;
@@ -251,8 +293,7 @@ private:
     rclcpp::Publisher<String>::SharedPtr gear_pub_, safety_;
     rclcpp::Publisher<Float32>::SharedPtr speed_pub_;
 
-    rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Service<Trigger>::SharedPtr toggle_stop_service_;
+    rclcpp::TimerBase::SharedPtr timer_, canceling_timer_;
     rclcpp::CallbackGroup::SharedPtr callback_group_;
 };
 

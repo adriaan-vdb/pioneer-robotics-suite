@@ -30,7 +30,7 @@ def generate_launch_description():
     rviz2_node = Node(
         package="rviz2",
         executable="rviz2",
-        arguments=["-d", os.path.join(get_package_share_directory("p3at_bringup"), "rviz", "display.rviz")],
+        arguments=["-d", os.path.join(get_package_share_directory("p3at_bringup"), "rviz", "display2.rviz")],
     )
 
     overlay_node1 = Node(
@@ -57,6 +57,18 @@ def generate_launch_description():
         ],
     )
 
+    overlay_node3 = Node(
+        package='rviz_2d_overlay_plugins',
+        executable='string_to_overlay_text',
+        name='string_to_overlay_text_3',
+        output='screen',
+        parameters=[
+            {"string_topic": "pose_text"},
+            {"fg_color": "b"}, # colors can be: r,g,b,w,k,p,y (red,green,blue,white,black,pink,yellow)
+            {"bg_color": "w"},
+        ],
+    )
+
     return LaunchDescription([
         model_arg,
         robot_state_publisher_node,
@@ -64,4 +76,9 @@ def generate_launch_description():
         rviz2_node,
         overlay_node1,
         overlay_node2,
+        overlay_node3,
+        Node(
+            package="p3at_vision",
+            executable="gui"
+        )
     ])
