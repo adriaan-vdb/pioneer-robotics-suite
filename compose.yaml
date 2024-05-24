@@ -36,7 +36,42 @@ services:
     build:
       context: .
       target: common
-    command: ros2 launch p3at_bringup slam.launch.py
+    command: bash -c "cd src/p3at_bringup/maps && ros2 launch p3at_bringup slam.launch.py"
+    # command: bash -c " sleep 1 && ros2 launch p3at_bringup bringup.launch.py"
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm  
+      - type: bind
+        source: src/p3at_bringup/maps
+        target: $WORKSPACE/src/p3at_bringup/maps
+
+  p3at_navigation2:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_navigation2
+    network_mode: host
+    build:
+      context: .
+      target: common
+    # command: bash -c "cd src/p3at_bringup/maps && ros2 launch p3at_bringup slam.launch.py"
+    command: ros2 launch p3at_bringup navigation.launch.py
+    volumes:
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm  
+      - type: bind
+        source: src/p3at_bringup/maps
+        target: $WORKSPACE/src/p3at_bringup/maps
+
+  p3at_goal:
+    image: ${IMAGE}:${TAG}
+    container_name: p3at_goal
+    network_mode: host
+    build:
+      context: .
+      target: common
+    # command: bash -c "cd src/p3at_bringup/maps && ros2 launch p3at_bringup slam.launch.py"
+    command: ros2 launch p3at_bringup exploring.launch.py
     volumes:
       - type: bind
         source: /dev/shm
@@ -53,6 +88,7 @@ services:
       context: .
       target: common
     command: ros2 launch p3at_bringup display.launch.py
+    # command: ros2 launch nav2_bringup rviz_launch.py
     privileged: True
     volumes:
       # - /tmp/.X11-unix:/tmp/.X11-unix:rw
@@ -60,6 +96,9 @@ services:
       - type: bind
         source: /dev/shm
         target: /dev/shm
+      - type: bind
+        source: src/p3at_bringup/rviz
+        target: $WORKSPACE/src/p3at_bringup/rviz
 
   p3at_sensors:
     image: ${IMAGE}:${TAG}
@@ -91,14 +130,14 @@ services:
     build:
       context: .
       target: common
-    command: bash -c "cd ../incidentRecord && ros2 bag record --snapshot-mode -a"
+    command: bash -c "cd incidentRecord && ros2 bag record --snapshot-mode -a"
     volumes:
       - type: bind
         source: /dev/shm
         target: /dev/shm
       - type: bind
-        source: ./incidentRecord
-        target: $WORKSPACE/../incidentRecord
+        source: ../incidentRecord
+        target: $WORKSPACE/incidentRecord
 
   p3at_lidar:
     image: ${IMAGE}:${TAG}
@@ -184,6 +223,9 @@ services:
       - type: bind
         source: /dev/bus/usb
         target: /dev/bus/usb
+      - type: bind
+        source: ../SavedImages
+        target: $WORKSPACE/SavedImages
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
     privileged: True
